@@ -3,193 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Notes App</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2em;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-        }
-
-        .folder {
-            cursor: pointer;
-            margin: 10px 0;
-            padding: 10px 15px;
-            background-color: #0078D7;
-            color: #fff;
-            border-radius: 5px;
-            transition: transform 0.3s, background 0.3s;
-        }
-
-        .folder:hover {
-            transform: scale(1.05);
-            background-color: #0053A6;
-        }
-        
-        .tree {
-            margin-left: 15px;
-        }
-
-        .tree .note {
-            margin: 5px;
-            padding: 10px;
-            background-color: #E8F0FE;
-            border: 1px solid #0078D7;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .tree .note:hover {
-            transform: translateX(10px);
-            background: #dce5fa;
-        }
-
-        .new-folder {
-            margin: 20px 0 10px;
-            padding: 10px 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto 0;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #218838;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-5px);
-            }
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
+    <title>Notes App</title>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Enhanced Notes Application</h1>
-    <div class="container">
-        <div>
-            <input type="text" id="new-folder" class="new-folder" placeholder="Enter new folder name">
-            <button class="btn" onclick="addFolder()">Add Folder</button>
-        </div>
-        <div id="folders" class="folders"></div>
-    </div>
-
+    <h1>Notes</h1>
+    <div id="notesContainer"></div>
+    <button id="addNoteBtn" onclick="addNote()">Add Note</button>
+    <button id="openNoteBtn" onclick="openNote()">Open Note</button>
     <script>
-        const foldersContainer = document.getElementById("folders");
-        const folderData = JSON.parse(localStorage.getItem("folders")) || [];
-
-        function addFolder() {
-            const folderName = document.getElementById("new-folder").value.trim();
-            if (!folderName) {
-                alert("Folder name cannot be empty.");
-                return;
+        // Functionality to add a note
+        function addNote() {
+            let noteContent = prompt('Enter note content:');
+            if (noteContent) {
+                // Logic to add the note
+                const notesContainer = document.getElementById('notesContainer');
+                const noteElement = document.createElement('div');
+                noteElement.innerText = noteContent;
+                notesContainer.appendChild(noteElement);
             }
+        }
 
-            if (folderData.find(({ name }) => name === folderName)) {
-                alert("Folder already exists.");
-                return;
+        // Logic to open an existing note
+        function openNote() {
+            const notes = document.getElementById('notesContainer').childNodes;
+            if (notes.length > 0) {
+                alert('Opening note: ' + notes[0].innerText);
+            } else {
+                alert('No notes available to open.');
             }
-
-            folderData.push({ name: folderName, notes: [] });
-            localStorage.setItem("folders", JSON.stringify(folderData));
-            document.getElementById("new-folder").value = "";
-            renderFolders();
         }
-
-        function renderFolders() {
-            foldersContainer.innerHTML = "";
-
-            folderData.forEach((folder, index) => {
-                const folderDiv = document.createElement("div");
-                folderDiv.className = "folder fade-in";
-                folderDiv.innerHTML = `${folder.name}`;
-                folderDiv.onclick = () => toggleTree(index);
-
-                const tree = document.createElement("div");
-                tree.className = "tree hidden";
-
-                if (folder.notes.length) {
-                    folder.notes.forEach((note, noteIndex) => {
-                        const noteDiv = document.createElement("div");
-                        noteDiv.className = "note";
-                        noteDiv.onclick = (event) => {
-                            event.stopPropagation();
-                            const noteWindow = window.open("", "_blank");
-                            noteWindow.document.write(`<!DOCTYPE html><html><head><title>Note</title></head><body><h1>${note}</h1></body></html>`);
-                        };
-                        noteDiv.textContent = note;
-                        tree.appendChild(noteDiv);
-                    });
-                } else {
-                    const emptyMessage = document.createElement("p");
-                    emptyMessage.textContent = "No notes yet. Add one!";
-                    tree.appendChild(emptyMessage);
-                }
-
-                const addNoteDiv = document.createElement("div");
-                addNoteDiv.innerHTML = `<input class='new-folder' placeholder='Enter note' id='new-note-${index}'>\n                <button class='btn' onclick='addNote(${index})'>+ Note</button>`;
-                tree.appendChild(addNoteDiv);
-
-                folderDiv.appendChild(tree);
-                foldersContainer.appendChild(folderDiv);
-            });
-        }
-
-        function toggleTree(folderIndex) {
-            const currentFolder = foldersContainer.children[folderIndex].querySelector(".tree");
-            currentFolder.classList.toggle("hidden");
-        }
-
-        function addNote(index) {
-            const inputValue = document.getElementById(`new-note-${index}`).value.trim();
-            if (!inputValue) {
-                alert("Note cannot be empty.");
-                return;
-            }
-
-            folderData[index].notes.push(inputValue);
-            localStorage.setItem("folders", JSON.stringify(folderData));
-            renderFolders();
-        }
-
-        renderFolders();
     </script>
 </body>
 </html>
