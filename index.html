@@ -3,22 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS-Style Notes App</title>
-    <link rel="stylesheet" href="style.css">
+    <title>iOS Style Notes App</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
+        .note { background: white; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); margin: 10px 0; padding: 15px; }
+        .btn { background: #007AFF; color: white; border: none; border-radius: 5px; padding: 10px 15px; cursor: pointer; }
+        .btn:hover { background: #0051A8; }
+    </style>
 </head>
 <body>
-    <div class="app">
-        <header>
-            <h1>Notes</h1>
-            <button id="addNote">+</button>
-            <button id="toggleMode">Toggle Dark Mode</button>
-        </header>
-        <div id="folderManagement">
-            <button id="addFolder">Add Folder</button>
-            <ul id="folderList"></ul>
-        </div>
-        <main id="notesContainer"></main>
+    <div class="container">
+        <h1>Notes</h1>
+        <button class="btn" id="addNoteBtn">Add Note</button>
+        <div id="notesList"></div>
     </div>
-    <script src="app.js"></script>
+    <script>
+        const notesList = document.getElementById('notesList');
+        const addNoteBtn = document.getElementById('addNoteBtn');
+        let notes = [];
+
+        function renderNotes() {
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const noteDiv = document.createElement('div');
+                noteDiv.className = 'note';
+                noteDiv.innerHTML = `<p>${note}</p><button class='btn' onclick='deleteNote(${index})'>Delete</button>`;
+                notesList.appendChild(noteDiv);
+            });
+        }
+
+        function deleteNote(index) {
+            notes.splice(index, 1);
+            renderNotes();
+        }
+
+        addNoteBtn.addEventListener('click', () => {
+            const noteContent = prompt('Enter note content:');
+            if (noteContent) {
+                notes.push(noteContent);
+                renderNotes();
+            }
+        });
+    </script>
 </body>
 </html>
