@@ -1,18 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes App</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Responsive Notes Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input {
+            width: calc(100% - 12px);
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            background-color: #f9f9f9;
+        }
+
+        li:hover {
+            background-color: #ececec;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div id="app">
-        <h1>Notes</h1>
-        <input type="text" id="note-input" placeholder="Write a new note...">
-        <button id="add-note">Add Note</button>
-        <ul id="notes-list"></ul>
+    <h1>Notes App</h1>
+    <div class="container">
+        <input id="noteInput" type="text" placeholder="Write your note here...">
+        <button id="addNoteBtn">Add Note</button>
+        <ul id="notesList"></ul>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        const addNoteBtn = document.getElementById("addNoteBtn");
+        const notesList = document.getElementById("notesList");
+        const noteInput = document.getElementById("noteInput");
+
+        addNoteBtn.addEventListener("click", () => {
+            const noteContent = noteInput.value.trim();
+
+            if (noteContent === "") {
+                alert("Please write something before adding a note!");
+                return;
+            }
+
+            const newNote = document.createElement("li");
+            newNote.textContent = noteContent;
+            newNote.addEventListener("click", () => {
+                const noteWindow = window.open("", "_blank");
+                noteWindow.document.write(`<!DOCTYPE html>\n                    <html lang='en'>\n                        <head><title>Your Note</title></head>\n                        <body>\n                            <h1>Your Note</h1>\n                            <p>${noteContent}</p>\n                        </body>\n                    </html>`);
+            });
+
+            notesList.appendChild(newNote);
+            noteInput.value = ""; // Reset the input field
+        });
+    </script>
 </body>
+
 </html>
