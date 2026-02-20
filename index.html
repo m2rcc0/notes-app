@@ -1,44 +1,87 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes App</title>
-    <script>
-        let folders = {};
-
-        function openFolder(folderName) {
-            return folders[folderName] || [];
-        }
-
-        function addNoteToFolder(folderName, note) {
-            if (!folders[folderName]) {
-                folders[folderName] = [];
-            }
-            folders[folderName].push(note);
-        }
-
-        function renderNotes(folderName) {
-            const notes = openFolder(folderName);
-            const notesList = document.getElementById('notes-list');
-            notesList.innerHTML = '';
-            notes.forEach(note => {
-                const listItem = document.createElement('li');
-                listItem.textContent = note;
-                notesList.appendChild(listItem);
-            });
-        }
-    </script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .folder { margin: 10px; padding: 10px; border: 1px solid #ccc; }
+        .note { margin: 5px; padding: 5px; border: 1px dashed #999; }
+        button { margin: 5px; }
+    </style>
 </head>
 <body>
-    <h1>Manage Your Notes</h1>
+    <h1>Notes Application</h1>
     <div>
-        <h2>Folders</h2>
-        <div>
-            <button onclick="addNoteToFolder('Work', 'Finish project report')">Add note to Work</button>
-            <button onclick="addNoteToFolder('Personal', 'Buy groceries')">Add note to Personal</button>
-        </div>
-        <h2>Notes in Folder: <span id='folder-name'>Work</span></h2>
-        <ul id='notes-list'></ul>
-        <button onclick="renderNotes('Work')">Show Work Notes</button>
-        <button onclick="renderNotes('Personal')">Show Personal Notes</button>
+        <input type="text" id="folderName" placeholder="New Folder Name">
+        <button id="addFolder">Add Folder</button>
     </div>
+    <div id="foldersContainer"></div>
+
+    <script>
+        const foldersContainer = document.getElementById('foldersContainer');
+
+        function renderFolders() {
+            foldersContainer.innerHTML = '';
+            const folders = JSON.parse(localStorage.getItem('folders')) || {};
+            for (const folderName in folders) {
+                const folderDiv = document.createElement('div');
+                folderDiv.className = 'folder';
+                folderDiv.innerHTML = `<h3>${folderName} <button onclick="removeFolder('${folderName}')">Remove</button></h3>`;
+                const notes = folders[folderName];
+                notes.forEach((note, index) => {
+                    folderDiv.innerHTML += `<div class='note'>${note} <button onclick="removeNote('${folderName}', ${index})">Remove</button></div>`;
+                });
+                folderDiv.innerHTML += `<input type='text' placeholder='New Note'> 
+                                      <button onclick="addNote('${folderName}')">Add Note</button>`;
+                foldersContainer.appendChild(folderDiv);
+            }
+        }
+
+        function addFolder() {
+            const folderName = document.getElementById('folderName').value;
+            if (folderName) {
+                const folders = JSON.parse(localStorage.getItem('folders')) || {};
+                folders[folderName] = [];
+                localStorage.setItem('folders', JSON.stringify(folders));
+                renderFolders();
+                document.getElementById('folderName').value = '';
+            }
+        }
+
+        function removeFolder(folderName) {
+            const folders = JSON.parse(localStorage.getItem('folders')) || {};
+            delete folders[folderName];
+            localStorage.setItem('folders', JSON.stringify(folders));
+            renderFolders();
+        }
+
+        function addNote(folderName) {
+            const noteInput = event.target.previousElementSibling;
+            const note = noteInput.value;
+            if (note) {
+                const folders = JSON.parse(localStorage.getItem('folders')) || {};
+                if (folders[folderName]) {
+                    folders[folderName].push(note);
+                    localStorage.setItem('folders', JSON.stringify(folders));
+                    renderFolders();
+                    noteInput.value = '';
+                }
+            }
+        }
+
+        function removeNote(folderName, index) {
+            const folders = JSON.parse(localStorage.getItem('folders')) || {};
+            if (folders[folderName]) {
+                folders[folderName].splice(index, 1);
+                localStorage.setItem('folders', JSON.stringify(folders));
+                renderFolders();
+            }
+        }
+
+        document.getElementById('addFolder').addEventListener('click', addFolder);
+        renderFolders();
+    </script>
 </body>
 </html>
