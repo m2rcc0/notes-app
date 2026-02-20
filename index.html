@@ -151,7 +151,8 @@
                         noteDiv.className = "note";
                         noteDiv.onclick = (event) => {
                             event.stopPropagation();
-                            window.open(`note.html?note=${note}`);
+                            const noteWindow = window.open("", "_blank");
+                            noteWindow.document.write(`<!DOCTYPE html><html><head><title>Note</title></head><body><h1>${note}</h1></body></html>`);
                         };
                         noteDiv.textContent = note;
                         tree.appendChild(noteDiv);
