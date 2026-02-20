@@ -3,28 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Notes App</title>
+    <title>iOS-Style Notes App</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="sidebar">
-        <h2>Folders</h2>
-        <ul>
-            <li>Folder 1 <button class="delete-button">Delete</button></li>
-            <li>Folder 2 <button class="delete-button">Delete</button></li>
-        </ul>
-    </nav>
-    <main>
-        <h1>Your Notes</h1>
-        <div class="note">
-            <h2>Note Title</h2>
-            <p>This is a note. <button class="delete-button">Delete</button></p>
+    <div class="app">
+        <header>
+            <h1>Notes</h1>
+            <button id="addNote">+</button>
+            <button id="toggleMode">Toggle Dark Mode</button>
+        </header>
+        <div id="folderManagement">
+            <button id="addFolder">Add Folder</button>
+            <ul id="folderList"></ul>
         </div>
-        <div class="note">
-            <h2>Note Title 2</h2>
-            <p>This is another note. <button class="delete-button">Delete</button></p>
-        </div>
-    </main>
+        <main id="notesContainer"></main>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
