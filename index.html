@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        .folder {
+            margin-bottom: 20px;
+        }
+        .folder-name {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .todo-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .todo-item input {
+            margin-right: 10px;
+        }
+        .dark-mode {
+            background-color: #222;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>iOS-style Notes App</h1>
+    <div id="folders"></div>
+    <input type="text" id="folderInput" placeholder="New folder name">
+    <button id="addFolderBtn">Add Folder</button>
+    <script>
+        const foldersContainer = document.getElementById('folders');
+        const folderInput = document.getElementById('folderInput');
+        const addFolderBtn = document.getElementById('addFolderBtn');
+        let folders = JSON.parse(localStorage.getItem('folders')) || [];
+
+        const renderFolders = () => {
+            foldersContainer.innerHTML = '';
+            folders.forEach((folder, index) => {
+                const folderDiv = document.createElement('div');
+                folderDiv.className = 'folder';
+                folderDiv.innerHTML = `<div class='folder-name'>${folder.name}</div>`;
+                const todoList = document.createElement('ul');
+                todoList.className = 'todo-list';
+                folder.todos.forEach((todo, todoIndex) => {
+                    const todoItem = document.createElement('li');
+                    todoItem.className = 'todo-item';
+                    todoItem.innerHTML = `<input type='checkbox' ${todo.completed ? 'checked' : ''} onchange='updateTodo(${index}, ${todoIndex})'> ${todo.text}`;
+                    todoList.appendChild(todoItem);
+                });
+                folderDiv.appendChild(todoList);
+                const newTodoInput = document.createElement('input');
+                newTodoInput.placeholder = 'New todo...';
+                const addTodoBtn = document.createElement('button');
+                addTodoBtn.innerText = 'Add Todo';
+                addTodoBtn.onclick = () => addTodo(index, newTodoInput.value);
+                folderDiv.appendChild(newTodoInput);
+                folderDiv.appendChild(addTodoBtn);
+                foldersContainer.appendChild(folderDiv);
+            });
+        };
+
+        const addFolder = () => {
+            const newFolder = { name: folderInput.value, todos: [] };
+            folders.push(newFolder);
+            folderInput.value = '';
+            saveToLocalStorage();
+            renderFolders();
+        };
+
+        const addTodo = (folderIndex, text) => {
+            const todo = { text, completed: false };
+            folders[folderIndex].todos.push(todo);
+            saveToLocalStorage();
+            renderFolders();
+        };
+
+        const updateTodo = (folderIndex, todoIndex) => {
+            folders[folderIndex].todos[todoIndex].completed = !folders[folderIndex].todos[todoIndex].completed;
+            saveToLocalStorage();
+            renderFolders();
+        };
+
+        const saveToLocalStorage = () => {
+            localStorage.setItem('folders', JSON.stringify(folders));
+        };
+
+        addFolderBtn.onclick = addFolder;
+        renderFolders();
+    </script>
+</body>
+</html>
