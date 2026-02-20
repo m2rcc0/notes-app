@@ -4,35 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes App</title>
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Notes</h1>
-    <div id="notesContainer"></div>
-    <button id="addNoteBtn" onclick="addNote()">Add Note</button>
-    <button id="openNoteBtn" onclick="openNote()">Open Note</button>
-    <script>
-        // Functionality to add a note
-        function addNote() {
-            let noteContent = prompt('Enter note content:');
-            if (noteContent) {
-                // Logic to add the note
-                const notesContainer = document.getElementById('notesContainer');
-                const noteElement = document.createElement('div');
-                noteElement.innerText = noteContent;
-                notesContainer.appendChild(noteElement);
-            }
-        }
-
-        // Logic to open an existing note
-        function openNote() {
-            const notes = document.getElementById('notesContainer').childNodes;
-            if (notes.length > 0) {
-                alert('Opening note: ' + notes[0].innerText);
-            } else {
-                alert('No notes available to open.');
-            }
-        }
-    </script>
+    <div id="app">
+        <h1>Notes</h1>
+        <input type="text" id="note-input" placeholder="Write a new note...">
+        <button id="add-note">Add Note</button>
+        <ul id="notes-list"></ul>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
